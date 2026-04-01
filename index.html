@@ -486,19 +486,43 @@
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
-    .header h1 { font-size: 17px; }
+    .header { padding: 12px 14px; gap: 10px; }
+    .header h1 { font-size: 15px; }
+    .header .subtitle { font-size: 11px; }
+    .header .data-status { font-size: 10px; }
+    .header-logo { font-size: 22px; }
+
+    /* 뒤로 버튼: 모바일에서 아이콘만 */
+    .back-btn { padding: 7px 10px; font-size: 13px; }
+    .back-btn .back-text { display: none; }
+
+    /* 새로고침 버튼: 모바일에서 아이콘만 */
+    .refresh-btn { padding: 7px 10px; font-size: 13px; }
+    .refresh-btn .refresh-text { display: none; }
+
     .summary-row { flex-direction: column; align-items: center; gap: 15px; }
     .summary-item .value { font-size: 22px; }
     .project-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
     .stat-grid { grid-template-columns: 1fr 1fr; }
     .stat-card .stat-value { font-size: 18px; }
-    .bar-chart { height: 180px; }
     .modal { padding: 20px; }
+
+    /* 바 차트 모바일 */
+    .bar-chart { height: 160px; gap: 6px; padding: 0 4px; }
+    .bar-value { display: none; }  /* 겹침 방지: 값은 라벨 아래로 */
+    .bar-label { font-size: 10px; margin-top: 5px; }
+    .bar-label-amount { display: block; font-size: 9px; color: var(--primary); font-weight: 600; margin-top: 2px; }
   }
 
   @media (max-width: 480px) {
     .stat-grid { grid-template-columns: 1fr; }
     .project-grid { grid-template-columns: repeat(2, 1fr); }
+    .bar-chart { gap: 4px; }
+  }
+
+  /* 데스크톱에서는 라벨 아래 금액 숨기기 (bar-value로 대신 표시) */
+  @media (min-width: 769px) {
+    .bar-label-amount { display: none; }
   }
 
   .fade-in { animation: fadeIn 0.4s ease; }
@@ -516,7 +540,7 @@
 <body>
 
 <div class="header">
-  <button class="back-btn" id="backBtn" onclick="goBack()">← 뒤로</button>
+  <button class="back-btn" id="backBtn" onclick="goBack()">← <span class="back-text">뒤로</span></button>
   <div class="header-logo">🏛️</div>
   <div>
     <h1 id="headerTitle">경제사회연구원 비용 및 매출 관리</h1>
@@ -524,7 +548,7 @@
     <div class="data-status" id="dataStatus">데이터 불러오는 중...</div>
   </div>
   <button class="refresh-btn" id="refreshBtn" onclick="loadLiveData()" title="시트 데이터 새로고침">
-    <span id="refreshIcon">🔄</span> 새로고침
+    <span id="refreshIcon">🔄</span><span class="refresh-text"> 새로고침</span>
   </button>
 </div>
 
@@ -1243,7 +1267,7 @@ function showProject(id) {
           <div class="bar" style="height:${Math.max(pct, 1)}%; ${bg}">
             <div class="bar-value">${formatMoney(y.amount)}</div>
           </div>
-          <div class="bar-label">${y.year}${isCurrent ? '<br>(현재)' : ''}${hint}</div>
+          <div class="bar-label">${y.year}${isCurrent ? '<br>(현재)' : ''}<span class="bar-label-amount">${formatMoney(y.amount)}</span>${hint}</div>
         </div>
       `;
     });
@@ -1571,4 +1595,4 @@ async function initApp() {
 initApp();
 </script>
 </body>
-</html>
+</html>  
