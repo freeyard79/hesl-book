@@ -528,6 +528,25 @@
   .fade-in { animation: fadeIn 0.4s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+  .summary-item.clickable {
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: 12px;
+    transition: background 0.2s, transform 0.2s;
+    border: 2px solid transparent;
+  }
+  .summary-item.clickable:hover {
+    background: rgba(41, 128, 185, 0.08);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+  }
+  .summary-item.clickable .click-hint-small {
+    font-size: 10px;
+    color: var(--primary-light);
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+
   .color-high { color: var(--success); }
   .color-mid { color: var(--warning); }
   .color-low { color: var(--accent); }
@@ -557,13 +576,15 @@
   <div class="summary-card fade-in">
     <div class="summary-title">📊 2026년 전체 현황</div>
     <div class="summary-row">
-      <div class="summary-item">
+      <div class="summary-item clickable" onclick="showProjectTargetBreakdown()" title="클릭하여 프로젝트별 매출 목표 보기">
         <div class="label">매출 목표</div>
         <div class="value" id="totalTarget">-</div>
+        <div class="click-hint-small">▶ 프로젝트별 상세</div>
       </div>
-      <div class="summary-item">
+      <div class="summary-item clickable" onclick="showProjectRevenueBreakdown()" title="클릭하여 프로젝트별 매출 현황 보기">
         <div class="label">현재 매출액</div>
         <div class="value accent" id="totalRevenue">-</div>
+        <div class="click-hint-small">▶ 프로젝트별 상세</div>
       </div>
       <div class="summary-item">
         <div class="label">달성률</div>
@@ -1362,15 +1383,34 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
   const colors = ['#3498db','#27ae60','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2c3e50'];
   const total = b.detail.reduce((s, d) => s + d.amount, 0);
 
+  // 연도별 데이터가 있는 기업 판별
+  function hasMultiYear(companyName) {
+    let count = 0;
+    p.yearly.forEach(y => {
+      if (y.breakdown) {
+        y.breakdown.forEach(br => {
+          if (br.detail) {
+            br.detail.forEach(d => { if (d.company === companyName) count++; });
+          }
+        });
+      }
+    });
+    return count >= 2;
+  }
+
   let rowsHtml = '';
   b.detail.forEach((d, i) => {
     const pct = total > 0 ? ((d.amount / total) * 100).toFixed(1) : 0;
     const color = colors[i % colors.length];
+    const canDrill = hasMultiYear(d.company);
+    const safeCompany = d.company.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const safeBLabel = bLabel.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const drillIcon = canDrill ? `<span style="float:right;color:var(--primary-light);font-size:11px;">📅 연도별</span>` : '';
     rowsHtml += `
-      <tr>
+      <tr class="${canDrill ? 'clickable-row' : ''}" ${canDrill ? `onclick="showCompanyYearlyRevenue('${id}', '${safeCompany}', ${yearIdx}, '${safeBLabel}')"` : ''}>
         <td>
           <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:8px;"></span>
-          ${d.company}
+          ${d.company}${drillIcon}
         </td>
         <td class="num">${formatMoneyFull(d.amount)}</td>
         <td class="num">
@@ -1384,6 +1424,11 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
       </tr>`;
   });
 
+  const anyCanDrill = b.detail.some(d => hasMultiYear(d.company));
+  const drillHint = anyCanDrill
+    ? `<div style="font-size:12px;color:var(--text-light);margin-top:12px;text-align:center;">📅 아이콘이 표시된 기업을 클릭하면 연도별 매출을 확인할 수 있습니다</div>`
+    : '';
+
   const html = `
     <div style="margin-bottom:14px;">
       <button onclick="showYearlyBreakdown('${id}', ${yearIdx})" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:background 0.2s;" onmouseover="this.style.background='#dce3ea'" onmouseout="this.style.background='var(--bg)'">← 매출귀속별 보기로 돌아가기</button>
@@ -1395,7 +1440,8 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
       <thead><tr><th>기업/기관</th><th class="num">금액</th><th class="num">비율</th></tr></thead>
       <tbody>${rowsHtml}</tbody>
       <tfoot><tr><td>합계</td><td class="num">${formatMoneyFull(total)}</td><td class="num">100%</td></tr></tfoot>
-    </table>`;
+    </table>
+    ${drillHint}`;
 
   document.getElementById('modalContent').innerHTML = html;
 }
@@ -1445,6 +1491,153 @@ function showRevenueDetail(id) {
 
   document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ===== SHOW PROJECT TARGET BREAKDOWN (front page: 매출 목표 클릭) =====
+function showProjectTargetBreakdown() {
+  const colors = ['#3498db','#27ae60','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2c3e50','#16a085','#d35400','#7f8c8d'];
+  const totalTarget = projects.reduce((s, p) => s + p.revenueTarget, 0);
+  let rowsHtml = '';
+  projects.forEach((p, i) => {
+    if (p.revenueTarget === 0) return;
+    const pct = totalTarget > 0 ? ((p.revenueTarget / totalTarget) * 100).toFixed(1) : 0;
+    const color = colors[i % colors.length];
+    rowsHtml += `
+      <tr>
+        <td>
+          <span style="font-size:16px;margin-right:8px;">${p.icon}</span>${p.name}
+        </td>
+        <td class="num">${formatMoneyFull(p.revenueTarget)}</td>
+        <td class="num">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;background:#ecf0f1;border-radius:4px;height:8px;min-width:60px;">
+              <div style="width:${pct}%;background:${color};height:8px;border-radius:4px;"></div>
+            </div>
+            <span style="min-width:38px;text-align:right;">${pct}%</span>
+          </div>
+        </td>
+      </tr>`;
+  });
+
+  const html = `<h3>🎯 2026년 프로젝트별 매출 목표</h3>
+    <div style="text-align:center;font-size:28px;font-weight:700;color:var(--primary);margin:16px 0 4px;">${formatMoneyFull(totalTarget)}</div>
+    <div style="text-align:center;font-size:12px;color:var(--text-light);margin-bottom:20px;">전체 매출 목표 합계</div>
+    <table class="detail-table">
+      <thead><tr><th>프로젝트</th><th class="num">매출 목표</th><th class="num">비율</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+      <tfoot><tr><td>합계</td><td class="num">${formatMoneyFull(totalTarget)}</td><td class="num">100%</td></tr></tfoot>
+    </table>`;
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ===== SHOW PROJECT REVENUE BREAKDOWN (front page: 현재 매출액 클릭) =====
+function showProjectRevenueBreakdown() {
+  const colors = ['#3498db','#27ae60','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2c3e50','#16a085','#d35400','#7f8c8d'];
+  const totalRevenue = projects.reduce((s, p) => s + p.revenue, 0);
+
+  let rowsHtml = '';
+  const activeProjects = projects.filter(p => p.revenue > 0 || p.revenueTarget > 0);
+  activeProjects.forEach((p, i) => {
+    const pct = totalRevenue > 0 ? ((p.revenue / totalRevenue) * 100).toFixed(1) : '0.0';
+    const color = colors[i % colors.length];
+    const rateNum = p.revenueTarget > 0 ? (p.revenue / p.revenueTarget) * 100 : null;
+    const rateStr = rateNum !== null ? rateNum.toFixed(1) + '%' : '-';
+    const rateColor = rateNum === null ? 'var(--text-light)' : rateNum >= 80 ? 'var(--success)' : rateNum >= 30 ? 'var(--warning)' : 'var(--accent)';
+    rowsHtml += `
+      <tr>
+        <td>
+          <span style="font-size:16px;margin-right:8px;">${p.icon}</span>${p.name}
+        </td>
+        <td class="num">${formatMoneyFull(p.revenue)}</td>
+        <td class="num" style="color:${rateColor};font-weight:600;">${rateStr}</td>
+        <td class="num">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;background:#ecf0f1;border-radius:4px;height:8px;min-width:50px;">
+              <div style="width:${pct}%;background:${color};height:8px;border-radius:4px;"></div>
+            </div>
+            <span style="min-width:38px;text-align:right;">${pct}%</span>
+          </div>
+        </td>
+      </tr>`;
+  });
+
+  const html = `<h3>💰 2026년 프로젝트별 현재 매출액</h3>
+    <div style="text-align:center;font-size:28px;font-weight:700;color:var(--accent);margin:16px 0 4px;">${formatMoneyFull(totalRevenue)}</div>
+    <div style="text-align:center;font-size:12px;color:var(--text-light);margin-bottom:20px;">현재 총 매출액</div>
+    <table class="detail-table">
+      <thead><tr><th>프로젝트</th><th class="num">매출액</th><th class="num">달성률</th><th class="num">비중</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+      <tfoot><tr><td>합계</td><td class="num">${formatMoneyFull(totalRevenue)}</td><td class="num"></td><td class="num">100%</td></tr></tfoot>
+    </table>`;
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ===== SHOW COMPANY YEARLY REVENUE (project detail: 기업 클릭 → 연도별 매출) =====
+function showCompanyYearlyRevenue(projectId, companyName, yearIdx, bLabel) {
+  const p = projects.find(x => x.id === projectId);
+  if (!p) return;
+
+  // 이 기업의 연도별 매출 집계
+  const yearlyData = [];
+  p.yearly.forEach(y => {
+    let companyTotal = 0;
+    if (y.breakdown) {
+      y.breakdown.forEach(b => {
+        if (b.detail) {
+          b.detail.forEach(d => {
+            if (d.company === companyName) companyTotal += d.amount;
+          });
+        }
+      });
+    }
+    if (companyTotal > 0) yearlyData.push({ year: y.year, amount: companyTotal });
+  });
+
+  if (yearlyData.length === 0) return;
+
+  const maxAmount = Math.max(...yearlyData.map(y => y.amount));
+  const totalAll = yearlyData.reduce((s, y) => s + y.amount, 0);
+
+  let barsHtml = '';
+  yearlyData.forEach(y => {
+    const pct = (y.amount / maxAmount) * 100;
+    const isCurrent = y.year.includes('2026');
+    const bg = isCurrent
+      ? 'background:linear-gradient(180deg,var(--accent),#e74c3c)'
+      : `background:linear-gradient(180deg,${p.color},${p.color}cc)`;
+    barsHtml += `
+      <div class="bar-group">
+        <div class="bar" style="height:${Math.max(pct,1)}%;${bg}">
+          <div class="bar-value">${formatMoney(y.amount)}</div>
+        </div>
+        <div class="bar-label">${y.year}${isCurrent ? '<br>(현재)' : ''}<span class="bar-label-amount">${formatMoney(y.amount)}</span></div>
+      </div>`;
+  });
+
+  const safeLabel = bLabel ? bLabel.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : '';
+  const backBtn = yearIdx !== undefined
+    ? `<button onclick="showBreakdownDetail('${projectId}', ${yearIdx}, '${safeLabel}')"
+         style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:background 0.2s;"
+         onmouseover="this.style.background='#dce3ea'" onmouseout="this.style.background='var(--bg)'">← 기업/기관별 목록으로</button>`
+    : '';
+
+  const html = `
+    <div style="margin-bottom:14px;">${backBtn}</div>
+    <h3>🏢 ${companyName} — 연도별 매출 (${p.name})</h3>
+    <div style="text-align:center;font-size:24px;font-weight:700;color:var(--primary);margin:12px 0 4px;">${formatMoneyFull(totalAll)}</div>
+    <div style="text-align:center;font-size:12px;color:var(--text-light);margin-bottom:20px;">누적 총 매출액</div>
+    <div class="bar-chart" style="height:200px;">${barsHtml}</div>
+    <table class="detail-table" style="margin-top:20px;">
+      <thead><tr><th>연도</th><th class="num">매출액</th></tr></thead>
+      <tbody>${yearlyData.map(y => `<tr><td>${y.year}</td><td class="num">${formatMoneyFull(y.amount)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>합계</td><td class="num">${formatMoneyFull(totalAll)}</td></tr></tfoot>
+    </table>`;
+
+  document.getElementById('modalContent').innerHTML = html;
 }
 
 // ===== SHOW BUDGET DETAIL MODAL =====
