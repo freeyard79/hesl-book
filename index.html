@@ -1417,6 +1417,7 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
 function showRevenueDetail(id) {
   const p = projects.find(x => x.id === id);
   if (!p) return;
+  activeModalRefresh = () => showRevenueDetail(id); // 귀속월 로드 완료 시 자동 갱신용
 
   let html = `<h3>💰 ${p.name} - 거래처별 매출</h3>`;
 
@@ -1509,14 +1510,19 @@ function goBack() {
   window.scrollTo(0, 0);
 }
 
+// 현재 열린 모달을 다시 그리는 콜백 (귀속월 비동기 로드 완료 시 자동 갱신)
+let activeModalRefresh = null;
+
 function closeModal(e) {
   if (e.target === document.getElementById('modalOverlay')) {
     document.getElementById('modalOverlay').classList.remove('active');
+    activeModalRefresh = null;
   }
 }
 
 function closeModalDirect() {
   document.getElementById('modalOverlay').classList.remove('active');
+  activeModalRefresh = null;
 }
 
 // ===== LIVE DATA (Apps Script) =====
@@ -1842,6 +1848,10 @@ async function loadMonthDataFromSheets() {
   if (updated) {
     if (currentProjectId) showProject(currentProjectId);
     else renderFrontPage();
+    // 모달이 열려 있고 귀속월 갱신이 필요하면 자동으로 다시 렌더링
+    if (activeModalRefresh && document.getElementById('modalOverlay').classList.contains('active')) {
+      activeModalRefresh();
+    }
   }
 }
 
