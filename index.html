@@ -1017,6 +1017,22 @@ function renderDetailCost() {
 //  INIT
 // ══════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', loadData);
+
+// ══════════════════════════════════════════
+//  SERVICE WORKER 등록 (캐시 버전 v2)
+// ══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      // 이전 서비스워커(v1) 강제 해제 후 새 버전 등록
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registrations) await reg.unregister();
+      await navigator.serviceWorker.register('./sw.js');
+    } catch(e) {
+      console.warn('SW 등록 실패:', e);
+    }
+  });
+}
 </script>
 </body>
 </html>
