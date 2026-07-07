@@ -1542,7 +1542,15 @@ async function loadLiveData() {
       if (d.used          !== undefined) p.used          = d.used;
       if (d.revenueTarget !== undefined) p.revenueTarget = d.revenueTarget;
       if (d.revenue       !== undefined) p.revenue       = d.revenue;
-      if (d.revenueByClient && d.revenueByClient.length > 0) p.revenueByClient = d.revenueByClient;
+      if (d.revenueByClient && d.revenueByClient.length > 0) {
+        // 기존 month 데이터 보존 (API가 month 없이 반환할 경우)
+        const monthCache = {};
+        p.revenueByClient.forEach(c => { if (c.month) monthCache[c.client] = c.month; });
+        p.revenueByClient = d.revenueByClient.map(c => ({
+          ...c,
+          month: c.month || monthCache[c.client] || ''
+        }));
+      }
       if (d.budgetItems   && d.budgetItems.length   > 0) p.budgetItems   = d.budgetItems;
     });
 
@@ -1697,6 +1705,114 @@ function showCompanyYearlyRevenue(projectId, companyName) {
   document.getElementById('modalContent').innerHTML = html;
 }
 
+// ===== 구글시트 귀속월 직접 로드 =====
+const SPREADSHEET_ID = '17Jxg_6fdocR1D55wDd4ssyUmwLQTLSZhu8exzywH518';
+
+// 프로젝트별 매출 시트 이름
+const PROJECT_MONTH_SHEETS = {
+  'digital':      '사람과디지털포럼 매출',
+  'asia':         '아시아미래포럼 매출',
+  'regional':     '지역조사평가사업 매출',
+  'energy':       '에너지정의포럼 매출',
+  'governance':   '기업지배구조 매출',
+  'social_economy': '사회적경제정책포럼 매출',
+  'solidarity':   '사회연대경제 별지 매출',
+  'literacy':     '디지털리터러시사업 매출',
+};
+
+// CSV 텍스트를 2D 배열로 파싱 (quoted field 처리 포함)
+function parseCsvText(text) {
+  const rows = [];
+  let row = [], cell = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i + 1];
+    if (inQ) {
+      if (c === '"' && n === '"') { cell += '"'; i++; }
+      else if (c === '"') { inQ = false; }
+      else { cell += c; }
+    } else {
+      if (c === '"') { inQ = true; }
+      else if (c === ',') { row.push(cell); cell = ''; }
+      else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+      else if (c !== '\r') { cell += c; }
+    }
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+// CSV에서 특정 연도의 {거래처: 귀속월} 맵 추출
+function extractMonthMap(csvText, yearStr) {
+  const rows = parseCsvText(csvText);
+  if (rows.length < 2) return {};
+
+  const header = rows[0];
+
+  // 헤더에서 해당 연도 포함 셀 찾기 (예: "제5회(2026) 연도")
+  let yearCol = -1;
+  for (let i = 0; i < header.length; i++) {
+    if (header[i].includes(yearStr)) { yearCol = i; break; }
+  }
+  if (yearCol < 0) return {};
+
+  // 해당 연도 섹션 내에서 기업명, 귀속월 열 인덱스 탐색
+  let clientCol = -1, monthCol = -1;
+  for (let i = yearCol + 1; i < Math.min(yearCol + 12, header.length); i++) {
+    const h = header[i].trim();
+    if (h === '기업명') clientCol = i;
+    if (h === '귀속월') monthCol = i;
+  }
+  if (clientCol < 0 || monthCol < 0) return {};
+
+  // 데이터 행에서 해당 연도 항목 읽기
+  const monthMap = {};
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (String(row[yearCol] || '').trim() !== yearStr) continue;
+    const client = String(row[clientCol] || '').trim();
+    const month = String(row[monthCol] || '').trim();
+    if (client && month) monthMap[client] = month;
+  }
+  return monthMap;
+}
+
+// 각 프로젝트 매출 시트에서 귀속월 로드 후 revenueByClient 갱신
+async function loadMonthDataFromSheets() {
+  if (location.protocol === 'file:') return;
+  const yearStr = new Date().getFullYear().toString();
+  let updated = false;
+
+  for (const [projectId, sheetName] of Object.entries(PROJECT_MONTH_SHEETS)) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project || project.revenueByClient.length === 0) continue;
+
+    try {
+      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+      const resp = await fetch(url, { credentials: 'omit' });
+      if (!resp.ok) continue;
+
+      const text = await resp.text();
+      const monthMap = extractMonthMap(text, yearStr);
+      if (Object.keys(monthMap).length === 0) continue;
+
+      let changed = false;
+      project.revenueByClient = project.revenueByClient.map(c => {
+        const sheetMonth = monthMap[c.client];
+        if (sheetMonth && c.month !== sheetMonth) { changed = true; return { ...c, month: sheetMonth }; }
+        return c;
+      });
+      if (changed) updated = true;
+    } catch (e) {
+      console.warn('귀속월 로드 실패 (' + sheetName + '):', e);
+    }
+  }
+
+  if (updated) {
+    if (currentProjectId) showProject(currentProjectId);
+    else renderFrontPage();
+  }
+}
+
 // ===== SERVICE WORKER (기존 캐시 제거) =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
@@ -1709,8 +1825,9 @@ if ('serviceWorker' in navigator) {
 
 // ===== INIT =====
 async function initApp() {
-  renderFrontPage();   // 하드코딩된 데이터로 즉시 렌더링
-  await loadLiveData();
+  renderFrontPage();       // 하드코딩된 데이터로 즉시 렌더링
+  await loadLiveData();    // Apps Script에서 실시간 데이터 로드
+  loadMonthDataFromSheets(); // 구글 시트에서 귀속월 비동기 로드 (완료 후 자동 갱신)
 }
 initApp();
 </script>
