@@ -1351,7 +1351,9 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
   if (!b || !b.detail || b.detail.length === 0) return;
 
   const colors = ['#3498db','#27ae60','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f39c12','#2c3e50'];
-  const total = b.detail.reduce((s, d) => s + d.amount, 0);
+  const detailSum = b.detail.reduce((s, d) => s + d.amount, 0);
+  const total = (b.amount > 0 && b.amount > detailSum) ? b.amount : detailSum;
+  const uncategorized = total - detailSum;
   const safeLabel = bLabel.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
   let rowsHtml = '';
@@ -1377,6 +1379,22 @@ function showBreakdownDetail(id, yearIdx, bLabel) {
         </td>
       </tr>`;
   });
+  if (uncategorized > 0) {
+    const upct = ((uncategorized / total) * 100).toFixed(1);
+    rowsHtml += `
+      <tr style="color:var(--text-light);font-style:italic;">
+        <td>기타 / 집계 미완료</td>
+        <td class="num">${formatMoneyFull(uncategorized)}</td>
+        <td class="num">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;background:#ecf0f1;border-radius:4px;height:8px;min-width:60px;">
+              <div style="width:${upct}%;background:#95a5a6;height:8px;border-radius:4px;"></div>
+            </div>
+            <span style="min-width:38px;text-align:right;">${upct}%</span>
+          </div>
+        </td>
+      </tr>`;
+  }
 
   const html = `
     <div style="margin-bottom:14px;">
@@ -1405,19 +1423,24 @@ function showRevenueDetail(id) {
   if (p.revenueByClient.length === 0) {
     html += `<div style="text-align:center; color:var(--text-light); padding:30px;">아직 발생한 매출이 없습니다.</div>`;
   } else {
-    const total = p.revenueByClient.reduce((s, c) => s + c.amount, 0);
+    const itemsSum = p.revenueByClient.reduce((s, c) => s + c.amount, 0);
+    const total = (p.revenue > 0 && p.revenue > itemsSum) ? p.revenue : itemsSum;
+    const uncategorized = total - itemsSum;
     const hasHistoricalData = p.yearly.some(y => y.breakdown && y.breakdown.some(b => b.detail && b.detail.length > 0));
     html += `<table class="detail-table">
       <thead><tr><th>귀속월</th><th>거래처</th><th class="num">공급가액</th><th class="num">비율</th></tr></thead>
       <tbody>`;
     p.revenueByClient.forEach(c => {
-      const pct = ((c.amount / total) * 100).toFixed(1);
+      const pct = total > 0 ? ((c.amount / total) * 100).toFixed(1) : '0.0';
       const safeClient = (c.client || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       const drillIcon = hasHistoricalData ? `<span style="float:right;color:var(--primary-light);font-size:11px;opacity:0.7;">▶ 연도별</span>` : '';
       const rowClass = hasHistoricalData ? 'clickable-row' : '';
       const rowClick = hasHistoricalData ? `onclick="drillToCompanyFromRevenue('${id}', '${safeClient}')"` : '';
       html += `<tr class="${rowClass}" ${rowClick}><td>${c.month || '-'}</td><td>${c.client}${drillIcon}</td><td class="num">${formatMoneyFull(c.amount)}</td><td class="num">${pct}%</td></tr>`;
     });
+    if (uncategorized > 0) {
+      html += `<tr style="color:var(--text-light);font-style:italic;"><td>-</td><td>기타 / 집계 미완료</td><td class="num">${formatMoneyFull(uncategorized)}</td><td class="num">${((uncategorized/total)*100).toFixed(1)}%</td></tr>`;
+    }
     html += `</tbody><tfoot><tr><td colspan="2">합계</td><td class="num">${formatMoneyFull(total)}</td><td class="num">100%</td></tr></tfoot></table>`;
     if (hasHistoricalData) {
       html += `<div style="font-size:12px;color:var(--text-light);margin-top:12px;text-align:center;">▶ 거래처를 클릭하면 연도별 매출 내역을 볼 수 있습니다</div>`;
@@ -1713,7 +1736,7 @@ const PROJECT_MONTH_SHEETS = {
   'digital':      '사람과디지털포럼 매출',
   'asia':         '아시아미래포럼 매출',
   'regional':     '지역조사평가사업 매출',
-  'energy':       '에너지정의포럼 매출',
+  // 'energy': 에너지정의포럼 매출 시트는 월별 예산집행 형식으로 거래처별 귀속월 추출 불가
   'governance':   '기업지배구조 매출',
   'social_economy': '사회적경제정책포럼 매출',
   'solidarity':   '사회연대경제 별지 매출',
