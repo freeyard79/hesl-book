@@ -471,7 +471,7 @@ async function fetchSheet(sheetName, gid) {
   } else {
     url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
   }
-  const res = await fetch(url, { credentials: 'include' });
+  const res = await fetch(url, { credentials: 'omit' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
 }
