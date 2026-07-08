@@ -1466,8 +1466,13 @@ function showBudgetDetail(id) {
       <thead><tr><th>예산 항목</th><th class="num">예산</th><th class="num">사용</th><th class="num">잔여</th><th class="num">집행률</th></tr></thead>
       <tbody>`;
 
+    // "XXX 잔여", "전체", "전체 잔여" 등 소계·잔여 행 제외
+    const filteredItems = p.budgetItems.filter(item =>
+      !item.name.endsWith('잔여') && item.name !== '전체'
+    );
+
     let totalBudget = 0, totalUsed = 0;
-    p.budgetItems.forEach(item => {
+    filteredItems.forEach(item => {
       const remaining = item.budget - item.used;
       const rate = item.budget > 0 ? ((item.used / item.budget) * 100).toFixed(1) + '%' : (item.used > 0 ? '초과' : '-');
       const overBudget = item.used > item.budget && item.budget > 0;
