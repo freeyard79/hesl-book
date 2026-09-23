@@ -951,10 +951,10 @@ const projects = [
     revenueTarget: 355000000,
     revenue: 269445455,
     revenueByClient: [
-      { client: '유선희 외(5/17~ 5/31선수금)', amount: 1430000, month: '2026-06' },
+      { client: '유선희 외(5/17~ 5/31선수금)', amount: 1430000, month: '2026-06' , kind: '일반티켓매출' },
       { client: '카카오', amount: 150000000, month: '2026-05' },
-      { client: '김재중 외(6/1~가수금)', amount: 1050000, month: '2026-06' },
-      { client: '(주)해시드오픈리서치', amount: 420000, month: '2026-06' },
+      { client: '김재중 외(6/1~가수금)', amount: 1050000, month: '2026-06' , kind: '일반티켓매출' },
+      { client: '(주)해시드오픈리서치', amount: 420000, month: '2026-06' , kind: '일반티켓매출' },
       { client: '케이티나스미디어(넥슨)', amount: 10000000, month: '2026-06' },
       { client: '카카오뱅크', amount: 7000000, month: '2026-06' },
       { client: 'HMM', amount: 5000000, month: '2026-06' },
@@ -972,6 +972,27 @@ const projects = [
       { client: '한국산업인력공단', amount: 4545455, month: '2026-06' },
       { client: '국민은행', amount: 20000000, month: '2026-08' },
     ],
+        // 매출 귀속 스냅샷 (시트 로드 시 '사람과디지털포럼 매출' 탭 값으로 교체)
+    attrMap: {
+      '개인': '경사연 자체매출',
+      '카카오': '경사연 자체매출',
+      '넥슨': '경사연 자체매출',
+      '카카오뱅크': '경사연 자체매출',
+      'HMM': '경사연 자체매출',
+      '네이버': '경사연 자체매출',
+      '넷마블': '경사연 자체매출',
+      '삼성SDI': '경사연 자체매출',
+      '현대해상': '경사연 자체매출',
+      '토스(비바리퍼블리카)': '경사연 자체매출',
+      '한국산업인력공단': '경사연 자체매출',
+      '현대차그룹(현대자동차)': '이관 매출',
+      'SK하이닉스': '이관 매출',
+      '엘지디스플레이': '이관 매출',
+      'LGU+': '이관 매출',
+      '엘지': '이관 매출',
+      '삼성전자': '이관 매출',
+      'KB지주(국민은행)': '이관 매출',
+    },
     budgetItems: [
       { name: '회의비-기타', budget: 2700000, used: 2641136 },
       { name: '판매수수료-광고수수료', budget: 56250000, used: 7950000 },
@@ -1496,8 +1517,9 @@ function showRevenueDetail(id) {
     const total = p.revenue > 0 ? p.revenue : itemsSum;
     const uncategorized = total - itemsSum;
     const hasHistoricalData = p.yearly.some(y => y.breakdown && y.breakdown.some(b => b.detail && b.detail.length > 0));
+    const showAttr = p.revenueByClient.some(c => c.attr);
     html += `<table class="detail-table">
-      <thead><tr><th>귀속월</th><th>거래처</th><th class="num">공급가액</th><th class="num">비율</th></tr></thead>
+      <thead><tr><th>귀속월</th><th>거래처</th>${showAttr ? '<th>매출 귀속</th>' : ''}<th class="num">공급가액</th><th class="num">비율</th></tr></thead>
       <tbody>`;
     p.revenueByClient.forEach(c => {
       const pct = total > 0 ? ((c.amount / total) * 100).toFixed(1) : '0.0';
@@ -1505,12 +1527,12 @@ function showRevenueDetail(id) {
       const drillIcon = hasHistoricalData ? `<span style="float:right;color:var(--primary-light);font-size:11px;opacity:0.7;">▶ 연도별</span>` : '';
       const rowClass = hasHistoricalData ? 'clickable-row' : '';
       const rowClick = hasHistoricalData ? `onclick="drillToCompanyFromRevenue('${id}', '${safeClient}')"` : '';
-      html += `<tr class="${rowClass}" ${rowClick}><td>${formatMonth(c.month)}</td><td>${c.client}${drillIcon}</td><td class="num">${formatMoneyFull(c.amount)}</td><td class="num">${pct}%</td></tr>`;
+      html += `<tr class="${rowClass}" ${rowClick}><td>${formatMonth(c.month)}</td><td>${c.client}${drillIcon}</td>${showAttr ? `<td>${c.attr || '-'}</td>` : ''}<td class="num">${formatMoneyFull(c.amount)}</td><td class="num">${pct}%</td></tr>`;
     });
     if (uncategorized !== 0) {
-      html += `<tr style="color:var(--text-light);font-style:italic;"><td>-</td><td>${uncategorized > 0 ? '기타 / 집계 미완료' : '03 탭 매출과 차이'}</td><td class="num">${formatMoneyFull(uncategorized)}</td><td class="num">${((uncategorized/total)*100).toFixed(1)}%</td></tr>`;
+      html += `<tr style="color:var(--text-light);font-style:italic;"><td>-</td><td>${uncategorized > 0 ? '기타 / 집계 미완료' : '03 탭 매출과 차이'}</td>${showAttr ? '<td></td>' : ''}<td class="num">${formatMoneyFull(uncategorized)}</td><td class="num">${((uncategorized/total)*100).toFixed(1)}%</td></tr>`;
     }
-    html += `</tbody><tfoot><tr><td colspan="2">합계</td><td class="num">${formatMoneyFull(total)}</td><td class="num">100%</td></tr></tfoot></table>`;
+    html += `</tbody><tfoot><tr><td colspan="${showAttr ? 3 : 2}">합계</td><td class="num">${formatMoneyFull(total)}</td><td class="num">100%</td></tr></tfoot></table>`;
     if (hasHistoricalData) {
       html += `<div style="font-size:12px;color:var(--text-light);margin-top:12px;text-align:center;">▶ 거래처를 클릭하면 연도별 매출 내역을 볼 수 있습니다</div>`;
     }
@@ -1848,6 +1870,16 @@ const SHEET_GIDS = {
   ledger:  '1619908439',  // 02.2026년 매출
 };
 
+// 매출 귀속(경사연 자체매출/이관 매출/광고국 매출)으로 구분된 프로젝트별 매출 탭
+const ATTRIBUTION_SHEETS = {
+  digital: '1485226442',  // 사람과디지털포럼 매출
+};
+const ATTR_ORDER = ['경사연 자체매출', '이관 매출', '광고국 매출'];
+function normAttr(a) {
+  const s = String(a || '').replace(/\s+/g, '');
+  return { '경사연자체매출': '경사연 자체매출', '이관매출': '이관 매출', '광고국매출': '광고국 매출' }[s] || (s ? String(a).trim() : '');
+}
+
 // 신규 프로젝트 자동 추가 시 사용할 기본 색상
 const AUTO_COLORS = ['#1abc9c','#e84393','#6c5ce7','#00b894','#fd79a8','#0984e3','#e17055','#636e72'];
 
@@ -1862,6 +1894,8 @@ const CLIENT_ALIAS = {
   '한국전력공사': '한국전력',
   '효성': '효성', '효성그룹': '효성',
   '현대차': '현대자동차',
+  '현대모비스': '현대차그룹(현대자동차)',
+  '삼성전자(비바리퍼블리카)': '삼성전자',
   'LS': 'LS그룹',
   'LG전자': '엘지전자',
 };
@@ -1945,6 +1979,8 @@ function applyLedgerSheet(rows) {
   const cProj   = h.indexOf('프로젝트');
   const cClient = h.findIndex(x => x.startsWith('기업명'));
   const cAmount = h.indexOf('공급가액');
+  const cDept   = h.indexOf('내부담당구분');
+  const cKind   = h.indexOf('구분');
   const cMonth  = 0; // A열: 귀속월 (YYYY-MM)
 
   const byProject = {};
@@ -1956,7 +1992,11 @@ function applyLedgerSheet(rows) {
     if (status !== '완료' || !pname || !client || amount === 0) return;
     const list = byProject[pname] || (byProject[pname] = []);
     let item = list.find(c => c.client === client);
-    if (!item) { item = { client, amount: 0, months: [] }; list.push(item); }
+    if (!item) {
+      item = { client, amount: 0, months: [],
+               dept: String(r[cDept] || '').trim(), kind: String(r[cKind] || '').trim() };
+      list.push(item);
+    }
     item.amount += amount;
     const month = String(r[cMonth] || '').trim();
     if (month && !item.months.includes(month)) item.months.push(month);
@@ -1964,8 +2004,89 @@ function applyLedgerSheet(rows) {
 
   projects.forEach(p => {
     const list = (byProject[p.name] || []).filter(c => c.amount !== 0);
-    p.revenueByClient = list.map(c => ({ client: c.client, amount: c.amount, month: c.months.sort().join(', ') }));
+    p.revenueByClient = list.map(c => ({ client: c.client, amount: c.amount, month: c.months.sort().join(', '),
+                                         dept: c.dept, kind: c.kind }));
   });
+}
+
+// 프로젝트별 매출 탭(회차별 섹션: 연도|기업명|매출 귀속|매출 구분|매출액)을 읽어
+//  - 과거 회차: 매출 귀속별 → 기업별 내역을 시트 그대로 반영
+//  - 기업별 매출 귀속 표(attrMap): 2026 원장 건을 귀속별로 나누는 데 사용
+function applyAttributionSheet(p, rows) {
+  const h0 = rows[0] || [], h1 = rows[1] || [];
+  const sections = [];
+  h1.forEach((v, c) => {
+    if (String(v).trim() !== '연도' || String(h1[c + 1] || '').trim() !== '기업명') return;
+    const sub = h1.slice(c, c + 10).map(x => String(x).trim());
+    const year = (String(h0[c] || '').match(/(\d{4})/) || [])[1];
+    const a = sub.indexOf('매출 귀속'), m = sub.indexOf('매출액'), mo = sub.indexOf('귀속월');
+    if (year && a > 0 && m > 0) sections.push({ year, cYear: c, cName: c + 1, cAttr: c + a, cAmt: c + m, cMonth: mo > 0 ? c + mo : -1 });
+  });
+  if (sections.length === 0) return;
+
+  const attrMap = {};
+  const byYear = {};
+  const curYear = String(new Date().getFullYear());
+  const current = []; // 올해 회차 거래처 (시트 표기 그대로)
+  sections.sort((x, y) => x.year - y.year).forEach(s => {
+    rows.slice(2).forEach(r => {
+      if (String(r[s.cYear] || '').trim() !== s.year) return;
+      const name = String(r[s.cName] || '').trim();
+      if (!name || name === '매출합계') return;
+      const attr = normAttr(r[s.cAttr]);
+      if (attr) attrMap[canonicalClient(name)] = attr; // 최근 회차 값이 우선
+      const amt = parseNum(r[s.cAmt]);
+      if (!amt) return;
+      const label = attr || '미분류';
+      if (s.year === curYear) {
+        const month = s.cMonth >= 0 ? String(r[s.cMonth] || '').trim() : '';
+        let c = current.find(x => x.client === name && x.attr === label);
+        if (!c) { c = { client: name, amount: 0, attr: label, months: [] }; current.push(c); }
+        c.amount += amt;
+        if (month && !c.months.includes(month)) c.months.push(month);
+      }
+      const y = byYear[s.year] || (byYear[s.year] = {});
+      const b = y[label] || (y[label] = {});
+      b[name] = (b[name] || 0) + amt;
+    });
+  });
+  p.attrMap = attrMap;
+
+  // 올해 회차 합계가 03 탭 매출과 같으면 매출 탭 내역을 그대로 사용, 다르면 02 원장 + 귀속 분류
+  const curSum = current.reduce((s, c) => s + c.amount, 0);
+  if (current.length > 0 && curSum === p.revenue) {
+    p.revenueByClient = current.map(c => ({ client: c.client, amount: c.amount, attr: c.attr, month: c.months.sort().join(', ') }));
+    p.revenueSource = 'sheet';
+  } else {
+    p.revenueSource = 'ledger';
+    if (current.length > 0) console.warn(`${p.name} 매출 탭 ${curYear} 합계(${curSum})가 03 탭 매출(${p.revenue})과 달라 02 원장 기준으로 표시`);
+  }
+
+  Object.entries(byYear).forEach(([year, attrs]) => {
+    if (year === curYear) return; // 올해는 02 원장 기준 (syncYearly2026)
+    const labels = Object.keys(attrs).sort((a, b) =>
+      (ATTR_ORDER.indexOf(a) + 1 || 99) - (ATTR_ORDER.indexOf(b) + 1 || 99));
+    const breakdown = labels.map(label => {
+      const detail = Object.entries(attrs[label])
+        .map(([company, amount]) => ({ company, amount }))
+        .sort((a, b) => b.amount - a.amount);
+      return { label, amount: detail.reduce((s, d) => s + d.amount, 0), detail };
+    });
+    const amount = breakdown.reduce((s, b) => s + b.amount, 0);
+    let y = p.yearly.find(x => (x.year.match(/(\d{4})/) || [])[1] === year);
+    if (!y) { y = { year }; p.yearly.push(y); p.yearly.sort((a, b) => (a.year.match(/\d{4}/) || [0])[0] - (b.year.match(/\d{4}/) || [0])[0]); }
+    y.amount = amount;
+    y.breakdown = breakdown;
+  });
+}
+
+// 2026 원장 거래처의 매출 귀속: 매출 탭 표기 → 없으면 내부담당구분(광고국=이관 매출)
+function attributionOf(p, c) {
+  if (!p.attrMap) return '';
+  const key = canonicalClient(c.client);
+  if (p.attrMap[key]) return p.attrMap[key];
+  if (/티켓/.test(c.kind || '') && p.attrMap['개인']) return p.attrMap['개인'];
+  return c.dept === '광고국' ? '이관 매출' : '경사연 자체매출';
 }
 
 // 2026년 연도별 막대를 현재 매출과 동기화
@@ -1975,11 +2096,27 @@ function syncYearly2026() {
     if (!y && p.revenue > 0) { y = { year: '2026', amount: 0, breakdown: [] }; p.yearly.push(y); }
     if (!y) return;
     y.amount = p.revenue;
-    y.breakdown = p.revenueByClient.length > 0 ? [{
-      label: '거래처별 매출',
-      amount: p.revenue,
-      detail: p.revenueByClient.map(c => ({ company: c.client, amount: c.amount })),
-    }] : [];
+    if (p.revenueByClient.length === 0) { y.breakdown = []; return; }
+    if (p.attrMap) {
+      const groups = {};
+      p.revenueByClient.forEach(c => {
+        c.attr = c.attr || attributionOf(p, c);
+        (groups[c.attr] || (groups[c.attr] = [])).push({ company: c.client, amount: c.amount });
+      });
+      y.breakdown = Object.keys(groups)
+        .sort((a, b) => (ATTR_ORDER.indexOf(a) + 1 || 99) - (ATTR_ORDER.indexOf(b) + 1 || 99))
+        .map(label => ({
+          label,
+          amount: groups[label].reduce((s, d) => s + d.amount, 0),
+          detail: groups[label].sort((a, b) => b.amount - a.amount),
+        }));
+    } else {
+      y.breakdown = [{
+        label: '거래처별 매출',
+        amount: p.revenue,
+        detail: p.revenueByClient.map(c => ({ company: c.client, amount: c.amount })),
+      }];
+    }
   });
 }
 
@@ -1998,6 +2135,13 @@ async function loadFromSheetDirect() {
   ]);
   applySummarySheet(summary);
   applyLedgerSheet(ledger);
+  // 매출 귀속 탭은 실패해도 나머지 데이터는 유지
+  await Promise.all(Object.entries(ATTRIBUTION_SHEETS).map(async ([pid, gid]) => {
+    const p = projects.find(x => x.id === pid);
+    if (!p) return;
+    try { applyAttributionSheet(p, await fetchSheetRows(gid)); }
+    catch (e) { console.warn('매출 귀속 탭 로드 실패 (' + pid + '):', e); }
+  }));
   syncYearly2026();
 }
 
