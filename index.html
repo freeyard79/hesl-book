@@ -578,21 +578,22 @@ const projects = [
     icon: '🌏',
     color: '#3498db',
     budget: 494750000,
-    used: 1053227,
+    used: 10037466,
     revenueTarget: 700000000,
     revenue: 0,
     revenueByClient: [],
     budgetItems: [
-      { name: '회의비-기타', budget: 4200000, used: 137227 },
+      { name: '회의비-기타', budget: 4200000, used: 1720384 },
       { name: '판매수수료-광고수수료', budget: 106500000, used: 0 },
+      { name: '여비교통비-국내출장비', budget: 0, used: 113900 },
       { name: '여비교통비-해외출장비', budget: 20000000, used: 0 },
+      { name: '지급수수료-금융수수료', budget: 400000, used: 0 },
       { name: '지급수수료-공연/전시대행', budget: 244000000, used: 0 },
       { name: '지급수수료-강사/연사료', budget: 100000000, used: 0 },
-      { name: '지급수수료-기타', budget: 18600000, used: 900000 },
-      { name: '운반보관비', budget: 50000, used: 0 },
+      { name: '지급수수료-기타', budget: 18600000, used: 8150000 },
+      { name: '운반보관비-운반보관비', budget: 50000, used: 15000 },
+      { name: '소모품비-기타', budget: 0, used: 38182 },
       { name: '원고료-기타', budget: 1000000, used: 0 },
-      { name: '인쇄제본비-기타', budget: 0, used: 16000 },
-      { name: '지급수수료-금융수수료', budget: 400000, used: 0 },
     ],
     yearly: [
       { year: '2020', amount: 510000000, breakdown: [
@@ -693,18 +694,20 @@ const projects = [
     icon: '📋',
     color: '#e67e22',
     budget: 38480000,
-    used: 5183682,
+    used: 15304631,
     revenueTarget: 65000000,
     revenue: 15000000,
     revenueByClient: [
-      { client: '새마을금고중앙회', amount: 15000000, month: '2026-03' }
+      { client: '새마을금고중앙회', amount: 15000000, month: '2026-03' },
     ],
     budgetItems: [
-      { name: '회의비-기타', budget: 1980000, used: 250882 },
-      { name: '여비교통비-국내출장비', budget: 3500000, used: 732800 },
+      { name: '회의비-기타', budget: 1980000, used: 1292453 },
+      { name: '여비교통비-국내출장비', budget: 3500000, used: 5014600 },
       { name: '통신비-우편료', budget: 100000, used: 0 },
-      { name: '지급수수료-기타', budget: 22500000, used: 4200000 },
-      { name: '인쇄제본비-기타', budget: 10400000, used: 0 },
+      { name: '지급수수료-기타', budget: 22500000, used: 8700000 },
+      { name: '인쇄제본비-기타', budget: 10400000, used: 11500 },
+      { name: '지급수수료-정보통신이용료', budget: 0, used: 42606 },
+      { name: '지급수수료-소프트웨어사용료', budget: 0, used: 243472 },
     ],
     yearly: [
       { year: '2026', amount: 15000000, breakdown: [
@@ -718,16 +721,29 @@ const projects = [
     icon: '⚡',
     color: '#27ae60',
     budget: 29600000,
-    used: 455000,
+    used: 9522501,
     revenueTarget: 80000000,
-    revenue: 0,
-    revenueByClient: [],
+    revenue: 58454546,
+    revenueByClient: [
+      { client: 'SK하이닉스', amount: 3000000, month: '2026-04' },
+      { client: '삼성전자', amount: 5000000, month: '2026-04' },
+      { client: '두산에너빌리티', amount: 5000000, month: '2026-04' },
+      { client: '서울상공회의소', amount: 1818182, month: '2026-05' },
+      { client: '한국수력원자력', amount: 4545455, month: '2026-05' },
+      { client: '포스코', amount: 5000000, month: '2026-05' },
+      { client: '(주)효성', amount: 5000000, month: '2026-05' },
+      { client: '엘지', amount: 5000000, month: '2026-05' },
+      { client: '현대자동차', amount: 10000000, month: '2026-05' },
+      { client: '우리금융그룹', amount: 5000000, month: '2026-05' },
+      { client: '한국전력공사', amount: 9090909, month: '2026-05' },
+    ],
     budgetItems: [
-      { name: '회의비-기타', budget: 800000, used: 455000 },
-      { name: '판매수수료-광고수수료', budget: 12000000, used: 0 },
+      { name: '회의비-기타', budget: 800000, used: 789036 },
+      { name: '판매수수료-광고수수료', budget: 12000000, used: 3550000 },
+      { name: '통신비-우편료', budget: 0, used: 3920 },
       { name: '지급수수료-강사/연사료', budget: 7800000, used: 0 },
-      { name: '지급수수료-기타', budget: 5000000, used: 0 },
-      { name: '인쇄제본비-기타', budget: 4000000, used: 0 },
+      { name: '지급수수료-기타', budget: 5000000, used: 4105000 },
+      { name: '인쇄제본비-기타', budget: 4000000, used: 1074545 },
     ],
     yearly: [
       { year: '2023', amount: 63000000, breakdown: [
@@ -760,29 +776,28 @@ const projects = [
           { company: '한국수력원자력', amount: 4545455 },
           { company: '한국전력', amount: 4545455 },
           { company: 'LS그룹', amount: 5000000 },
-          { company: '현대자동차', amount: 9090909 },
-          { company: '대한상공회의소', amount: 3000000 },
-          { company: '포스코', amount: 909091 },
+          { company: '현대자동차', amount: 10000000 },
+          { company: '삼성SDS', amount: 3000000 },
         ]},
       ]},
       { year: '2025', amount: 85000000, breakdown: [
         { label: '제7회', amount: 38636364, detail: [
           { company: '한국전력', amount: 9090909 },
-          { company: '현대자동차', amount: 9090909 },
-          { company: '한국수력원자력', amount: 9090909 },
-          { company: 'SK하이닉스', amount: 5000000 },
-          { company: 'LS그룹', amount: 5000000 },
-          { company: '대한상공회의소', amount: 1363636 },
+          { company: '효성', amount: 5000000 },
+          { company: '현대자동차', amount: 10000000 },
+          { company: '포스코', amount: 5000000 },
+          { company: '아모레퍼시픽', amount: 5000000 },
+          { company: '한국수력원자력', amount: 4545455 },
         ]},
         { label: '제8회', amount: 46363636, detail: [
-          { company: '현대자동차', amount: 9090909 },
-          { company: '한국전력', amount: 9090909 },
-          { company: '한국수력원자력', amount: 9090909 },
-          { company: 'LS그룹', amount: 5000000 },
+          { company: '대한상공회의소', amount: 1818182 },
+          { company: '한국수력원자력', amount: 4545455 },
           { company: 'SK하이닉스', amount: 5000000 },
           { company: '포스코', amount: 5000000 },
-          { company: '에코프로', amount: 2727272 },
-          { company: '대한상공회의소', amount: 1363636 },
+          { company: '한화', amount: 5000000 },
+          { company: '현대차', amount: 15000000 },
+          { company: 'LS', amount: 5000000 },
+          { company: '엘지전자', amount: 5000000 },
         ]},
       ]},
       { year: '2026', amount: 0, breakdown: [] },
@@ -794,7 +809,7 @@ const projects = [
     icon: '🏢',
     color: '#8e44ad',
     budget: 41900000,
-    used: 24244067,
+    used: 34757918,
     revenueTarget: 272727273,
     revenue: 291818181,
     revenueByClient: [
@@ -806,15 +821,15 @@ const projects = [
       { client: '트러스톤자산운용', amount: 9090909, month: '2026-02' },
     ],
     budgetItems: [
-      { name: '회의비-기타', budget: 2100000, used: 1833737 },
-      { name: '여비교통비-해외출장비', budget: 10000000, used: 0 },
+      { name: '회의비-기타', budget: 2100000, used: 2096004 },
+      { name: '여비교통비-해외출장비', budget: 10000000, used: 9451584 },
       { name: '통신비-우편료', budget: 0, used: 7960 },
       { name: '지급수수료-금융수수료', budget: 0, used: 163788 },
       { name: '지급수수료-강사/연사료', budget: 10200000, used: 14109200 },
-      { name: '지급수수료-기타', budget: 17000000, used: 6190000 },
-      { name: '인쇄제본비-기타', budget: 2000000, used: 1892182 },
+      { name: '지급수수료-기타', budget: 17000000, used: 6990000 },
       { name: '소모품비-기타', budget: 0, used: 47200 },
       { name: '원고료-기타', budget: 600000, used: 0 },
+      { name: '인쇄제본비-기타', budget: 2000000, used: 1892182 },
     ],
     yearly: [
       { year: '2025', amount: 181818182, breakdown: [
@@ -836,20 +851,20 @@ const projects = [
     icon: '🏛️',
     color: '#9b59b6',
     budget: 39000000,
-    used: 0,
+    used: 4378278,
     revenueTarget: 100000000,
     revenue: 0,
     revenueByClient: [],
     budgetItems: [
-      { name: '회의비-기타', budget: 2400000, used: 0 },
+      { name: '회의비-기타', budget: 2400000, used: 681278 },
       { name: '여비교통비-해외출장비', budget: 15000000, used: 0 },
       { name: '지급수수료-여론조사비', budget: 10000000, used: 0 },
-      { name: '지급수수료-강사/연사료', budget: 6200000, used: 0 },
+      { name: '지급수수료-강사/연사료', budget: 6200000, used: 1900000 },
       { name: '소모품비-기타', budget: 100000, used: 0 },
       { name: '원고료-기타', budget: 1200000, used: 0 },
-      { name: '인쇄제본비-기타', budget: 2000000, used: 0 },
+      { name: '인쇄제본비-기타', budget: 2000000, used: 450000 },
       { name: '도서신문비-일반/전문서적', budget: 600000, used: 0 },
-      { name: '접대비-기타', budget: 1500000, used: 0 },
+      { name: '접대비-기타', budget: 1500000, used: 1347000 },
     ],
     yearly: []
   },
@@ -876,7 +891,7 @@ const projects = [
     icon: '💬',
     color: '#2c3e50',
     budget: 20000000,
-    used: 0,
+    used: 16000,
     revenueTarget: 20000000,
     revenue: 0,
     revenueByClient: [],
@@ -884,6 +899,7 @@ const projects = [
       { name: '회의비-기타', budget: 1000000, used: 0 },
       { name: '여비교통비-국내출장비', budget: 1500000, used: 0 },
       { name: '지급수수료-공연/전시대행', budget: 17500000, used: 0 },
+      { name: '인쇄제본비-기타', budget: 0, used: 16000 },
     ],
     yearly: []
   },
@@ -899,7 +915,6 @@ const projects = [
     revenueByClient: [],
     budgetItems: [
       { name: '회의비-기타', budget: 300000, used: 0 },
-      { name: '지급수수료-금융수수료', budget: 300000, used: 0 },
       { name: '지급수수료-기타', budget: 1950000, used: 0 },
       { name: '인쇄제본비-기타', budget: 5000000, used: 0 },
     ],
@@ -915,7 +930,13 @@ const projects = [
     revenueTarget: 0,
     revenue: 0,
     revenueByClient: [],
-    budgetItems: [],
+    budgetItems: [
+      { name: '회의비-기타', budget: 500000, used: 112455 },
+      { name: '지급수수료-강사/연사료', budget: 3800000, used: 3640000 },
+      { name: '지급수수료-기타', budget: 3000000, used: 81819 },
+      { name: '임차료-행사장임차료', budget: 2050000, used: 2050000 },
+      { name: '인쇄제본비-기타', budget: 0, used: 1301500 },
+    ],
     yearly: [
       { year: '2026', amount: 0, breakdown: [] },
     ]
@@ -926,17 +947,41 @@ const projects = [
     icon: '💻',
     color: '#2980b9',
     budget: 330350000,
-    used: 1092267,
+    used: 117060326,
     revenueTarget: 355000000,
-    revenue: 0,
-    revenueByClient: [],
+    revenue: 269445455,
+    revenueByClient: [
+      { client: '유선희 외(5/17~ 5/31선수금)', amount: 1430000, month: '2026-06' },
+      { client: '카카오', amount: 150000000, month: '2026-05' },
+      { client: '김재중 외(6/1~가수금)', amount: 1050000, month: '2026-06' },
+      { client: '(주)해시드오픈리서치', amount: 420000, month: '2026-06' },
+      { client: '케이티나스미디어(넥슨)', amount: 10000000, month: '2026-06' },
+      { client: '카카오뱅크', amount: 7000000, month: '2026-06' },
+      { client: 'HMM', amount: 5000000, month: '2026-06' },
+      { client: '네이버', amount: 10000000, month: '2026-06' },
+      { client: '더원커뮤니케이션즈(넷마블)', amount: 10000000, month: '2026-06' },
+      { client: '삼성SDI', amount: 3000000, month: '2026-06' },
+      { client: '현대해상', amount: 3000000, month: '2026-06' },
+      { client: '비바리퍼블리카', amount: 3000000, month: '2026-06' },
+      { client: '현대모비스', amount: 6000000, month: '2026-06' },
+      { client: 'SK하이닉스', amount: 6000000, month: '2026-06' },
+      { client: '엘지디스플레이', amount: 3000000, month: '2026-06' },
+      { client: '엘지유플러스', amount: 20000000, month: '2026-06' },
+      { client: '엘지', amount: 3000000, month: '2026-06' },
+      { client: '삼성전자', amount: 3000000, month: '2026-06' },
+      { client: '한국산업인력공단', amount: 4545455, month: '2026-06' },
+      { client: '국민은행', amount: 20000000, month: '2026-08' },
+    ],
     budgetItems: [
-      { name: '회의비-기타', budget: 2700000, used: 1092267 },
-      { name: '판매수수료-광고수수료', budget: 56250000, used: 0 },
+      { name: '회의비-기타', budget: 2700000, used: 2641136 },
+      { name: '판매수수료-광고수수료', budget: 56250000, used: 7950000 },
+      { name: '여비교통비-국내출장비', budget: 0, used: 405300 },
+      { name: '지급수수료-금융수수료', budget: 300000, used: 121880 },
       { name: '지급수수료-공연/전시대행', budget: 190000000, used: 0 },
-      { name: '지급수수료-강사/연사료', budget: 45000000, used: 0 },
-      { name: '지급수수료-연구용역비', budget: 4500000, used: 0 },
-      { name: '지급수수료-기타', budget: 31600000, used: 0 },
+      { name: '지급수수료-강사/연사료', budget: 45000000, used: 75687010 },
+      { name: '지급수수료-연구용역비', budget: 4500000, used: 4500000 },
+      { name: '지급수수료-기타', budget: 31600000, used: 23840000 },
+      { name: '임차료-행사장임차료', budget: 0, used: 1915000 },
     ],
     yearly: [
       { year: '1회(2022)', amount: 576200000, breakdown: [
@@ -1448,7 +1493,7 @@ function showRevenueDetail(id) {
     html += `<div style="text-align:center; color:var(--text-light); padding:30px;">아직 발생한 매출이 없습니다.</div>`;
   } else {
     const itemsSum = p.revenueByClient.reduce((s, c) => s + c.amount, 0);
-    const total = (p.revenue > 0 && p.revenue > itemsSum) ? p.revenue : itemsSum;
+    const total = p.revenue > 0 ? p.revenue : itemsSum;
     const uncategorized = total - itemsSum;
     const hasHistoricalData = p.yearly.some(y => y.breakdown && y.breakdown.some(b => b.detail && b.detail.length > 0));
     html += `<table class="detail-table">
@@ -1462,8 +1507,8 @@ function showRevenueDetail(id) {
       const rowClick = hasHistoricalData ? `onclick="drillToCompanyFromRevenue('${id}', '${safeClient}')"` : '';
       html += `<tr class="${rowClass}" ${rowClick}><td>${formatMonth(c.month)}</td><td>${c.client}${drillIcon}</td><td class="num">${formatMoneyFull(c.amount)}</td><td class="num">${pct}%</td></tr>`;
     });
-    if (uncategorized > 0) {
-      html += `<tr style="color:var(--text-light);font-style:italic;"><td>-</td><td>기타 / 집계 미완료</td><td class="num">${formatMoneyFull(uncategorized)}</td><td class="num">${((uncategorized/total)*100).toFixed(1)}%</td></tr>`;
+    if (uncategorized !== 0) {
+      html += `<tr style="color:var(--text-light);font-style:italic;"><td>-</td><td>${uncategorized > 0 ? '기타 / 집계 미완료' : '03 탭 매출과 차이'}</td><td class="num">${formatMoneyFull(uncategorized)}</td><td class="num">${((uncategorized/total)*100).toFixed(1)}%</td></tr>`;
     }
     html += `</tbody><tfoot><tr><td colspan="2">합계</td><td class="num">${formatMoneyFull(total)}</td><td class="num">100%</td></tr></tfoot></table>`;
     if (hasHistoricalData) {
@@ -1574,7 +1619,7 @@ function setRefreshLoading(loading) {
   icon.className   = loading ? 'spinner' : '';
 }
 
-async function loadLiveData() {
+async function loadFromAppsScript() {
   if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
     setStatus('⚠️ Apps Script URL 미설정 — 로컬 데이터 사용 중', true);
     return;
@@ -1710,7 +1755,7 @@ function showCompanyYearlyRevenue(projectId, companyName) {
       y.breakdown.forEach(b => {
         if (b.detail) {
           b.detail.forEach(d => {
-            if (d.company === companyName) yearTotal += d.amount;
+            if (canonicalClient(d.company) === canonicalClient(companyName)) yearTotal += d.amount;
           });
         }
       });
@@ -1766,25 +1811,14 @@ function showCompanyYearlyRevenue(projectId, companyName) {
 function formatMonth(month) {
   if (!month) return '-';
   // "YYYY-MM" 형식 처리
-  const m = String(month).match(/^(\d{4})-(\d{1,2})$/);
-  if (m) return parseInt(m[2], 10) + '월';
-  return month; // 이미 "5월" 등 다른 형식이면 그대로
+  return String(month).split(',').map(s => {
+    const m = s.trim().match(/^(\d{4})-(\d{1,2})$/);
+    return m ? parseInt(m[2], 10) + '월' : s.trim();
+  }).join(', '); // 이미 "5월" 등 다른 형식이면 그대로
 }
 
 // ===== 구글시트 귀속월 직접 로드 =====
 const SPREADSHEET_ID = '17Jxg_6fdocR1D55wDd4ssyUmwLQTLSZhu8exzywH518';
-
-// 프로젝트별 매출 시트 이름
-const PROJECT_MONTH_SHEETS = {
-  'digital':      '사람과디지털포럼 매출',
-  'asia':         '아시아미래포럼 매출',
-  'regional':     '지역조사평가사업 매출',
-  'energy':       '에너지정의포럼',   // "매출" 탭 아님 — 거래처별 시트
-  'governance':   '기업지배구조 매출',
-  'social_economy': '사회적경제정책포럼 매출',
-  'solidarity':   '사회연대경제 별지 매출',
-  'literacy':     '디지털리터러시사업 매출',
-};
 
 // CSV 텍스트를 2D 배열로 파싱 (quoted field 처리 포함)
 function parseCsvText(text) {
@@ -1807,79 +1841,182 @@ function parseCsvText(text) {
   return rows;
 }
 
-// CSV에서 특정 연도의 {거래처: 귀속월} 맵 추출
-function extractMonthMap(csvText, yearStr) {
-  const rows = parseCsvText(csvText);
-  if (rows.length < 2) return {};
+// ===== 구글시트 직접 연동 (03 프로젝트별 비용·매출 + 02 매출 원장) =====
+// 시트 탭 gid (탭 이름이 바뀌어도 gid는 유지됨)
+const SHEET_GIDS = {
+  summary: '851117822',   // 03.2026년 프로젝트별 비용 및 매출
+  ledger:  '1619908439',  // 02.2026년 매출
+};
 
-  const header = rows[0];
+// 신규 프로젝트 자동 추가 시 사용할 기본 색상
+const AUTO_COLORS = ['#1abc9c','#e84393','#6c5ce7','#00b894','#fd79a8','#0984e3','#e17055','#636e72'];
 
-  // 헤더에서 해당 연도 포함 셀 찾기 (예: "제5회(2026) 연도")
-  let yearCol = -1;
-  for (let i = 0; i < header.length; i++) {
-    if (header[i].includes(yearStr)) { yearCol = i; break; }
-  }
-  if (yearCol < 0) return {};
-
-  // 해당 연도 섹션 내에서 기업명, 귀속월 열 인덱스 탐색
-  let clientCol = -1, monthCol = -1;
-  for (let i = yearCol + 1; i < Math.min(yearCol + 12, header.length); i++) {
-    const h = header[i].trim();
-    if (h === '기업명') clientCol = i;
-    if (h === '귀속월') monthCol = i;
-  }
-  if (clientCol < 0 || monthCol < 0) return {};
-
-  // 데이터 행에서 해당 연도 항목 읽기
-  const monthMap = {};
-  for (let r = 1; r < rows.length; r++) {
-    const row = rows[r];
-    if (String(row[yearCol] || '').trim() !== yearStr) continue;
-    const client = String(row[clientCol] || '').trim();
-    const month = String(row[monthCol] || '').trim();
-    if (client && month) monthMap[client] = month;
-  }
-  return monthMap;
+// 연도별 비교 시 같은 기업으로 볼 이름 (원장 표기 → 과거 연도 표기)
+const CLIENT_ALIAS = {
+  '케이티나스미디어(넥슨)': '넥슨',
+  '더원커뮤니케이션즈(넷마블)': '넷마블',
+  '비바리퍼블리카': '토스(비바리퍼블리카)',
+  '토스': '토스(비바리퍼블리카)',
+  '엘지유플러스': 'LGU+',
+  '국민은행': 'KB지주(국민은행)',
+  '한국전력공사': '한국전력',
+  '효성': '효성', '효성그룹': '효성',
+  '현대차': '현대자동차',
+  'LS': 'LS그룹',
+  'LG전자': '엘지전자',
+};
+function canonicalClient(name) {
+  let n = String(name || '').trim();
+  if (CLIENT_ALIAS[n]) return CLIENT_ALIAS[n];
+  n = n.replace(/\(주\)|㈜|주식회사/g, '').replace(/\s+/g, '').trim();
+  return CLIENT_ALIAS[n] || n;
 }
 
-// 각 프로젝트 매출 시트에서 귀속월 로드 후 revenueByClient 갱신
-async function loadMonthDataFromSheets() {
-  if (location.protocol === 'file:') return;
-  const yearStr = new Date().getFullYear().toString();
-  let updated = false;
+function parseNum(v) {
+  const s = String(v == null ? '' : v).replace(/[₩,\s원]/g, '');
+  if (s === '' || s === '-') return 0;
+  const n = Number(s);
+  return isNaN(n) ? 0 : n;
+}
 
-  for (const [projectId, sheetName] of Object.entries(PROJECT_MONTH_SHEETS)) {
-    const project = projects.find(p => p.id === projectId);
-    if (!project || project.revenueByClient.length === 0) continue;
+async function fetchSheetRows(gid) {
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}&t=${Date.now()}`;
+  const resp = await fetch(url, { credentials: 'omit', cache: 'no-store' });
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const text = await resp.text();
+  if (/^\s*</.test(text)) throw new Error('CSV가 아닌 응답 (시트 공유 설정 확인 필요)');
+  return parseCsvText(text);
+}
 
-    try {
-      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-      const resp = await fetch(url, { credentials: 'omit' });
-      if (!resp.ok) continue;
-
-      const text = await resp.text();
-      const monthMap = extractMonthMap(text, yearStr);
-      if (Object.keys(monthMap).length === 0) continue;
-
-      let changed = false;
-      project.revenueByClient = project.revenueByClient.map(c => {
-        const sheetMonth = monthMap[c.client];
-        if (sheetMonth && c.month !== sheetMonth) { changed = true; return { ...c, month: sheetMonth }; }
-        return c;
-      });
-      if (changed) updated = true;
-    } catch (e) {
-      console.warn('귀속월 로드 실패 (' + sheetName + '):', e);
+// 03 탭: 계정별 예산/사용, 전체 예산/사용, 매출, 매출목표
+function applySummarySheet(rows) {
+  const header = rows[0].map(h => String(h).trim());
+  const cols = {}; // colIndex -> project
+  header.forEach((name, i) => {
+    if (i === 0 || !name || name === '계정별 합계') return;
+    let p = projects.find(x => x.name === name);
+    if (!p) { // 시트에 새 프로젝트 열이 추가된 경우 자동 생성
+      p = { id: 'auto_' + i, name, icon: '📁', color: AUTO_COLORS[i % AUTO_COLORS.length],
+            budget: 0, used: 0, revenueTarget: 0, revenue: 0, revenueByClient: [], budgetItems: [], yearly: [] };
+      projects.push(p);
     }
+    cols[i] = p;
+  });
+
+  const acc = {}; // projectId -> { account: {budget, used} }, 순서 유지용 order
+  const order = [];
+  Object.values(cols).forEach(p => { acc[p.id] = {}; });
+
+  rows.slice(1).forEach(row => {
+    const label = String(row[0] || '').trim();
+    if (!label) return;
+    const each = fn => Object.entries(cols).forEach(([i, p]) => fn(p, parseNum(row[i])));
+
+    if (label === '전체 예산')      return each((p, v) => { p.budget = v; });
+    if (label === '전체 사용')      return each((p, v) => { p.used = v; });
+    if (label === '매출')           return each((p, v) => { p.revenue = v; });
+    if (label === '매출목표')       return each((p, v) => { p.revenueTarget = v; });
+    if (label.startsWith('전체') || label.endsWith('잔여 예산')) return;
+
+    let m = label.match(/^(.+) 예산$/), key = 'budget';
+    if (!m) { m = label.match(/^(.+) 사용$/); key = 'used'; }
+    if (!m) return;
+    const account = m[1].trim();
+    if (!order.includes(account)) order.push(account);
+    each((p, v) => {
+      if (!acc[p.id][account]) acc[p.id][account] = { budget: 0, used: 0 };
+      acc[p.id][account][key] = v;
+    });
+  });
+
+  Object.values(cols).forEach(p => {
+    p.budgetItems = order
+      .filter(a => acc[p.id][a] && (acc[p.id][a].budget !== 0 || acc[p.id][a].used !== 0))
+      .map(a => ({ name: a, budget: acc[p.id][a].budget, used: acc[p.id][a].used }));
+  });
+}
+
+// 02 탭: 진행상황 '완료' 건만 거래처별로 합산 (03 탭 '매출'과 같은 기준)
+function applyLedgerSheet(rows) {
+  const hIdx = rows.findIndex(r => r.includes('프로젝트') && r.includes('공급가액'));
+  if (hIdx < 0) throw new Error('02 매출 탭 헤더를 찾을 수 없음');
+  const h = rows[hIdx].map(x => String(x).trim());
+  const cStatus = h.indexOf('진행상황');
+  const cProj   = h.indexOf('프로젝트');
+  const cClient = h.findIndex(x => x.startsWith('기업명'));
+  const cAmount = h.indexOf('공급가액');
+  const cMonth  = 0; // A열: 귀속월 (YYYY-MM)
+
+  const byProject = {};
+  rows.slice(hIdx + 1).forEach(r => {
+    const status = String(r[cStatus] || '').trim();
+    const pname  = String(r[cProj] || '').trim();
+    const client = String(r[cClient] || '').trim();
+    const amount = parseNum(r[cAmount]);
+    if (status !== '완료' || !pname || !client || amount === 0) return;
+    const list = byProject[pname] || (byProject[pname] = []);
+    let item = list.find(c => c.client === client);
+    if (!item) { item = { client, amount: 0, months: [] }; list.push(item); }
+    item.amount += amount;
+    const month = String(r[cMonth] || '').trim();
+    if (month && !item.months.includes(month)) item.months.push(month);
+  });
+
+  projects.forEach(p => {
+    const list = (byProject[p.name] || []).filter(c => c.amount !== 0);
+    p.revenueByClient = list.map(c => ({ client: c.client, amount: c.amount, month: c.months.sort().join(', ') }));
+  });
+}
+
+// 2026년 연도별 막대를 현재 매출과 동기화
+function syncYearly2026() {
+  projects.forEach(p => {
+    let y = p.yearly.find(x => x.year.includes('2026'));
+    if (!y && p.revenue > 0) { y = { year: '2026', amount: 0, breakdown: [] }; p.yearly.push(y); }
+    if (!y) return;
+    y.amount = p.revenue;
+    y.breakdown = p.revenueByClient.length > 0 ? [{
+      label: '거래처별 매출',
+      amount: p.revenue,
+      detail: p.revenueByClient.map(c => ({ company: c.client, amount: c.amount })),
+    }] : [];
+  });
+}
+
+function refreshView() {
+  if (currentProjectId) showProject(currentProjectId);
+  else renderFrontPage();
+  if (activeModalRefresh && document.getElementById('modalOverlay').classList.contains('active')) {
+    activeModalRefresh();
   }
+}
 
-  if (updated) {
-    if (currentProjectId) showProject(currentProjectId);
-    else renderFrontPage();
-    // 모달이 열려 있고 귀속월 갱신이 필요하면 자동으로 다시 렌더링
-    if (activeModalRefresh && document.getElementById('modalOverlay').classList.contains('active')) {
-      activeModalRefresh();
-    }
+async function loadFromSheetDirect() {
+  const [summary, ledger] = await Promise.all([
+    fetchSheetRows(SHEET_GIDS.summary),
+    fetchSheetRows(SHEET_GIDS.ledger),
+  ]);
+  applySummarySheet(summary);
+  applyLedgerSheet(ledger);
+  syncYearly2026();
+}
+
+async function loadLiveData() {
+  if (location.protocol === 'file:') {
+    setStatus('⚠️ 로컬 파일로 열면 실시간 데이터를 불러올 수 없습니다. GitHub Pages 또는 웹서버로 접속하세요.', true);
+    return;
+  }
+  setRefreshLoading(true);
+  setStatus('시트 데이터 불러오는 중...', false);
+  try {
+    await loadFromSheetDirect();
+    const label = new Date().toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    setStatus(`✅ 구글시트 연동: ${label}`, false);
+    refreshView();
+    setRefreshLoading(false);
+  } catch (e) {
+    console.warn('시트 직접 로드 실패 → Apps Script로 대체:', e);
+    await loadFromAppsScript();
   }
 }
 
@@ -1895,9 +2032,9 @@ if ('serviceWorker' in navigator) {
 
 // ===== INIT =====
 async function initApp() {
-  renderFrontPage();       // 하드코딩된 데이터로 즉시 렌더링
-  await loadLiveData();    // Apps Script에서 실시간 데이터 로드
-  loadMonthDataFromSheets(); // 구글 시트에서 귀속월 비동기 로드 (완료 후 자동 갱신)
+  syncYearly2026();
+  renderFrontPage();       // 내장 스냅샷으로 즉시 렌더링
+  await loadLiveData();    // 구글시트(03·02 탭) 직접 로드 → 실패 시 Apps Script
 }
 initApp();
 </script>
