@@ -1233,7 +1233,9 @@ function getBarBg(rate) {
 
 // ===== RENDER FRONT PAGE =====
 function renderFrontPage() {
-  const totalTarget = projects.reduce((s, p) => s + p.revenueTarget, 0);
+  const totalTarget = (totalRevenueTargetOverride != null)
+    ? totalRevenueTargetOverride                              // 00 탭 AB31 + AB61
+    : projects.reduce((s, p) => s + p.revenueTarget, 0);      // 시트 로드 전/실패 시
   const totalRevenue = projects.reduce((s, p) => s + p.revenue, 0);
   const totalRate = getRate(totalRevenue, totalTarget);
 
@@ -1868,7 +1870,13 @@ function parseCsvText(text) {
 const SHEET_GIDS = {
   summary: '851117822',   // 03.2026년 프로젝트별 비용 및 매출
   ledger:  '1619908439',  // 02.2026년 매출
+  budget:  '0',           // 00.2026년 예산편성
 };
+
+// 2026년 전체 매출 목표 = 00 탭의 아래 셀 합계
+// (프로젝트가 추가/변경돼도 시트에서 계산된 값을 그대로 쓰므로 코드 수정 불필요)
+const TOTAL_TARGET_CELLS = ['AB31', 'AB61'];
+let totalRevenueTargetOverride = null;
 
 // 매출 귀속(경사연 자체매출/이관 매출/광고국 매출)으로 구분된 프로젝트별 매출 탭
 const ATTRIBUTION_SHEETS = {
@@ -1968,6 +1976,22 @@ function applySummarySheet(rows) {
       .filter(a => acc[p.id][a] && (acc[p.id][a].budget !== 0 || acc[p.id][a].used !== 0))
       .map(a => ({ name: a, budget: acc[p.id][a].budget, used: acc[p.id][a].used }));
   });
+}
+
+// A1 표기('AB31')로 CSV 2D 배열에서 값 읽기
+function cellValue(rows, a1) {
+  const m = String(a1).toUpperCase().match(/^([A-Z]+)(\d+)$/);
+  if (!m) return 0;
+  let col = 0;
+  for (const ch of m[1]) col = col * 26 + (ch.charCodeAt(0) - 64);
+  const row = rows[Number(m[2]) - 1];
+  return row ? parseNum(row[col - 1]) : 0;
+}
+
+// 00 탭: 2026년 전체 매출 목표
+function applyBudgetSheet(rows) {
+  const sum = TOTAL_TARGET_CELLS.reduce((s, a1) => s + cellValue(rows, a1), 0);
+  totalRevenueTargetOverride = sum > 0 ? sum : null;
 }
 
 // 02 탭: 진행상황 '완료' 건만 거래처별로 합산 (03 탭 '매출'과 같은 기준)
@@ -2129,12 +2153,15 @@ function refreshView() {
 }
 
 async function loadFromSheetDirect() {
-  const [summary, ledger] = await Promise.all([
+  const [summary, ledger, budget] = await Promise.all([
     fetchSheetRows(SHEET_GIDS.summary),
     fetchSheetRows(SHEET_GIDS.ledger),
+    // 00 탭은 실패해도 나머지 데이터는 유지 (매출 목표만 프로젝트 합계로 대체)
+    fetchSheetRows(SHEET_GIDS.budget).catch(e => { console.warn('00 예산편성 탭 로드 실패:', e); return null; }),
   ]);
   applySummarySheet(summary);
   applyLedgerSheet(ledger);
+  if (budget) applyBudgetSheet(budget);
   // 매출 귀속 탭은 실패해도 나머지 데이터는 유지
   await Promise.all(Object.entries(ATTRIBUTION_SHEETS).map(async ([pid, gid]) => {
     const p = projects.find(x => x.id === pid);
